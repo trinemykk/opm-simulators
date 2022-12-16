@@ -2106,15 +2106,15 @@ private:
                                       const Scalar visc = FluidSystem::oilPvt().viscosity(fs.pvtRegionIndex(),t,p,rs);
                                       const Scalar poro =  getValue(iq.porosity());
 
-                                      const Scalar sg = getValue(fs.saturation(FluidSystem::gasPhaseIdx));
-                                      const Scalar co2Density = FluidSystem::gasPvt().inverseFormationVolumeFactor(fs.pvtRegionIndex(),t,p,0.0 /*=Rv*/, 0.0 /*=Rvw*/) * FluidSystem::referenceDensity(FluidSystem::gasPhaseIdx, fs.pvtRegionIndex());
-                                      Scalar factor = 1.0;
-                                      const auto& oilVaporizationControl = simulator.vanguard().schedule()[episodeIdx].oilvap();
-                                      const Scalar x = oilVaporizationControl.getMaxDRSDT(fs.pvtRegionIndex());
-				                      if (rs < (rssat * sg)) {
-					                     factor /= x;
-					                     deltaDensity = (saturatedDensity - co2Density);
-				                                                
+                                    const Scalar sg = getValue(fs.saturation(FluidSystem::gasPhaseIdx));
+                                    const Scalar co2Density = FluidSystem::gasPvt().inverseFormationVolumeFactor(fs.pvtRegionIndex(),t,p,0.0 /*=Rv*/, 0.0 /*=Rvw*/) * FluidSystem::referenceDensity(FluidSystem::gasPhaseIdx, fs.pvtRegionIndex());
+                                    Scalar factor = 1.0;
+                                    const auto& oilVaporizationControl = simulator.vanguard().schedule()[episodeIdx].oilvap();
+                                    const Scalar x = oilVaporizationControl.getMaxDRSDT(fs.pvtRegionIndex());
+				                    if (rs < (rssat * sg)) {
+					                  factor /= x;
+					                   deltaDensity = (saturatedDensity - co2Density);
+				                    }                       
                                       // Note that for so = 0 this gives no limits (inf) for the dissolution rate
                                       // Also we restrict the effect of convective mixing to positive density differences
                                       // i.e. we only allow for fingers moving downward
