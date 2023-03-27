@@ -2183,7 +2183,8 @@ protected:
         if (active[0]) {
             // This implements the convective DRSDT as described in
             // Sandve et al. "Convective dissolution in field scale CO2 storage simulations using the OPM Flow
-            // simulator" Submitted to TCCS 11, 2021
+            // simulator" Submitted to TCCS 11, 2021,
+            // modification and introduction of regimes following Mykkeltvedt et al. Submitted to TCCS 12, 2023
             const Scalar g = this->gravity_[dim - 1];
             const DimMatrix& perm = intrinsicPermeability(compressedDofIdx);
             const Scalar permz = perm[dim - 1][dim - 1]; // The Z permeability
@@ -2192,25 +2193,43 @@ protected:
             const Scalar t = getValue(fs.temperature(FluidSystem::oilPhaseIdx));
             const Scalar p = getValue(fs.pressure(FluidSystem::oilPhaseIdx));
             const Scalar so = getValue(fs.saturation(FluidSystem::oilPhaseIdx));
+            const Scalar sg = getValue(fs.saturation(FluidSystem::gasPhaseIdx));
             const Scalar rssat = FluidSystem::oilPvt().saturatedGasDissolutionFactor(fs.pvtRegionIndex(), t, p);
             const Scalar saturatedInvB
                 = FluidSystem::oilPvt().saturatedInverseFormationVolumeFactor(fs.pvtRegionIndex(), t, p);
             const Scalar rsZero = 0.0;
+            const Scalar sg_max = 1.0;
             const Scalar pureDensity
                 = FluidSystem::oilPvt().inverseFormationVolumeFactor(fs.pvtRegionIndex(), t, p, rsZero)
                 * FluidSystem::oilPvt().oilReferenceDensity(fs.pvtRegionIndex());
             const Scalar saturatedDensity = saturatedInvB
                 * (FluidSystem::oilPvt().oilReferenceDensity(fs.pvtRegionIndex())
                    + rssat * FluidSystem::referenceDensity(FluidSystem::gasPhaseIdx, fs.pvtRegionIndex()));
-            const Scalar deltaDensity = saturatedDensity - pureDensity;
+            Scalar deltaDensity = saturatedDensity - pureDensity;
             const Scalar rs = getValue(fs.Rs());
             const Scalar visc = FluidSystem::oilPvt().viscosity(fs.pvtRegionIndex(), t, p, rs);
             const Scalar poro = getValue(iq.porosity());
             // Note that for so = 0 this gives no limits (inf) for the dissolution rate
             // Also we restrict the effect of convective mixing to positive density differences
             // i.e. we only allow for fingers moving downward
+
+            Scalar co2Density = FluidSystem::gasPvt().inverseFormationVolumeFactor(fs.pvtRegionIndex(),t,p,0.0 /*=Rv*/, 0.0 /*=Rvw*/) * FluidSystem::referenceDensity(FluidSystem::gasPhaseIdx, fs.pvtRegionIndex());
+			Scalar factor = 1.0;
+			const auto& oilVaporizationControl = simulator.vanguard().schedule()[episodeIdx].oilvap();
+			const Scalar Xhi = oilVaporizationControl.getMaxDRSDT(fs.pvtRegionIndex());
+			Scalar Smo = 0.35;
+			Scalar S = (rs - rssat * sg) / (rssat * ( 1.0 - sg));
+
+			 if ((rs >= (rssat * sg)) && (episodeIdx >=1)) {
+			 	if(S > Smo)
+			 		deltaDensity = 0.0;
+			 } else {
+			 	factor /= Xhi;
+			 	deltaDensity = (saturatedDensity - co2Density);
+			 }
+
             this->convectiveDrs_[compressedDofIdx]
-                = permz * rssat * max(0.0, deltaDensity) * g / (so * visc * distZ * poro);
+                = factor * permz * rssat * max(0.0, deltaDensity) * g / ( std::max(sg_max - sg, 0.0) * visc * distZ * poro);
         }
 
         if (active[1]) {
