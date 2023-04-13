@@ -795,6 +795,7 @@ assignToSolution(data::Solution& sol)
         {"BIOFILM",  UnitSystem::measure::identity,            cBiofilm_},
         {"CALCITE",  UnitSystem::measure::identity,            cCalcite_},
         {"DRSDTCON", UnitSystem::measure::gas_oil_ratio_rate,  drsdtcon_},
+        {"DYNPORV",  UnitSystem::measure::identity,            dynamicPoreVolume_},
         {"KRNSW_GO", UnitSystem::measure::identity,            krnSwMdcGo_},
         {"KRNSW_OW", UnitSystem::measure::identity,            krnSwMdcOw_},
         {"MICROBES", UnitSystem::measure::density,             cMicrobes_},
