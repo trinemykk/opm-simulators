@@ -2217,7 +2217,7 @@ protected:
 			Scalar factor = 1.0;
 			const auto& oilVaporizationControl = simulator.vanguard().schedule()[episodeIdx].oilvap();
 			const Scalar Xhi = oilVaporizationControl.getMaxDRSDT(fs.pvtRegionIndex());
-			Scalar Smo = 0.35; //=0.014 / Xhi;
+			Scalar Smo = 0.45; //=0.014 / Xhi;
 			Scalar S = (rs - rssat * sg) / (rssat * ( 1.0 - sg));
 
 			 if ((rs >= (rssat * sg)) && (episodeIdx >=1)) {
