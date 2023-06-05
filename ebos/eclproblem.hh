@@ -2217,19 +2217,20 @@ protected:
 			Scalar factor = 1.0;
 			const auto& oilVaporizationControl = simulator.vanguard().schedule()[episodeIdx].oilvap();
 			const Scalar Xhi = oilVaporizationControl.getMaxDRSDT(fs.pvtRegionIndex());
-			Scalar Smo = 0.37; //=0.014 / Xhi;
+			Scalar Smo = 0.35; //=0.014 / Xhi;
 			Scalar S = (rs - rssat * sg) / (rssat * ( 1.0 - sg));
-
+            Scalar alpha = 0.0;
 			 if ((rs >= (rssat * sg)) && (episodeIdx >=1)) {
 			 	if(S > Smo)
-			 		factor = 0.0;
+			 		factor = 0.0; //
+                    alpha = 3.4e-9;//6.17e-9;0.0;//0.00000069;
 			 } else {
 			 	factor /= Xhi;
 			 	deltaDensity = (saturatedDensity - co2Density);
 			 }
 
             this->convectiveDrs_[compressedDofIdx]
-                = factor * permz * rssat * max(0.0, deltaDensity) * g / ( std::max(sg_max - sg, 0.0) * visc * distZ * poro);
+                = factor * permz * rssat * max(0.0, deltaDensity) * g / ( std::max(sg_max - sg, 0.0) * visc * distZ * poro) + (alpha/Xhi);
         }
 
         if (active[1]) {
