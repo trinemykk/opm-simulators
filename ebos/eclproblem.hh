@@ -2223,7 +2223,7 @@ protected:
 			 if ((rs >= (rssat * sg)) && (episodeIdx >=1)) {
 			 	if(S > Smo)
 			 		factor = 0.0; //
-                    alpha = 3.4e-9;//6.17e-9;0.0;//0.00000069;
+                    alpha = 0.0;//3.4e-9;//6.17e-9;0.0;//0.00000069;
 			 } else {
 			 	factor /= Xhi;
 			 	deltaDensity = (saturatedDensity - co2Density);
