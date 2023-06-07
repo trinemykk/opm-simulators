@@ -2219,13 +2219,13 @@ protected:
 			Scalar factor = 1.0;
 			const auto& oilVaporizationControl = simulator.vanguard().schedule()[episodeIdx].oilvap();
 			const Scalar Xhi = oilVaporizationControl.getMaxDRSDT(fs.pvtRegionIndex());
-			Scalar Smo = 0.34;
+            Scalar Smo = oilVaporizationControl.getSmo(fs.pvtRegionIndex()); //0.34;
 			Scalar S = (rs - rssat * sg) / (rssat * ( 1.0 - sg));
             Scalar alpha = 0.0;
 			 if ((rs >= (rssat * sg)) && (episodeIdx >=1)) {
 			 	if(S > Smo)
 			 		factor = 0.0;
-                    alpha = 3.0e-9;
+                    alpha = oilVaporizationControl.getAlpha(fs.pvtRegionIndex()); //3.0e-9;
 			 } else {
 			 	factor /= Xhi;
 			 	deltaDensity = (saturatedDensity - co2Density);
