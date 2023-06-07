@@ -1968,6 +1968,8 @@ public:
             const auto& rho = FluidSystem::density(fluidState, phaseIdx, pvtRegionIdx);
             fluidState.setDensity(phaseIdx, rho);
 
+            const auto& mu = FluidSystem::viscosity(fluidState, phaseIdx, pvtRegionIdx);
+            fluidState.setViscosity(phaseIdx, mu);
         }
         return fluidState;
     }
@@ -2194,7 +2196,7 @@ protected:
             const Scalar p = getValue(fs.pressure(FluidSystem::oilPhaseIdx));
             const Scalar so = getValue(fs.saturation(FluidSystem::oilPhaseIdx));
             const Scalar sg = getValue(fs.saturation(FluidSystem::gasPhaseIdx));
-            const Scalar rssat = FluidSystem::oilPvt().saturatedGasDissolutionFactor(fs.pvtRegionIndex(), t, p);
+            const Scalar rssat = getValue(fs.RsSat());
             const Scalar saturatedInvB
                 = FluidSystem::oilPvt().saturatedInverseFormationVolumeFactor(fs.pvtRegionIndex(), t, p);
             const Scalar rsZero = 0.0;
@@ -2207,7 +2209,7 @@ protected:
                    + rssat * FluidSystem::referenceDensity(FluidSystem::gasPhaseIdx, fs.pvtRegionIndex()));
             Scalar deltaDensity = saturatedDensity - pureDensity;
             const Scalar rs = getValue(fs.Rs());
-            const Scalar visc = FluidSystem::oilPvt().viscosity(fs.pvtRegionIndex(), t, p, rs);
+            const Scalar visc = getValue(fs.viscosity(FluidSystem::oilPhaseIdx));
             const Scalar poro = getValue(iq.porosity());
             // Note that for so = 0 this gives no limits (inf) for the dissolution rate
             // Also we restrict the effect of convective mixing to positive density differences
@@ -2810,6 +2812,9 @@ protected:
 
                 const auto& rho = FluidSystem::density(dofFluidState, phaseIdx, pvtRegionIndex(dofIdx));
                 dofFluidState.setDensity(phaseIdx, rho);
+
+                const auto& mu = FluidSystem::viscosity(dofFluidState, phaseIdx, pvtRegionIndex(dofIdx));
+                dofFluidState.setViscosity(phaseIdx, mu);
 
             }
         }

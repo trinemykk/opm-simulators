@@ -166,6 +166,9 @@ public:
                 const auto& rho = FluidSystem::density(fluidState, phaseIdx, regionIdx);
                 fluidState.setDensity(phaseIdx, rho);
 
+                const auto& mu = FluidSystem::viscosity(fluidState, phaseIdx, regionIdx);
+                fluidState.setViscosity(phaseIdx, mu);
+
             }
 
             // set the salt concentration
