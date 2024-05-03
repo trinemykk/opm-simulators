@@ -59,6 +59,7 @@
 #include <opm/models/common/directionalmobility.hh>
 #include <opm/models/utils/pffgridvector.hh>
 #include <opm/models/blackoil/blackoilmodel.hh>
+#include <opm/models/blackoil/blackoilconvectivemixingmodule.hh>
 #include <opm/models/discretization/ecfv/ecfvdiscretization.hh>
 
 #include <opm/output/eclipse/EclipseIO.hpp>
@@ -180,6 +181,7 @@ class FlowProblem : public GetPropType<TypeTag, Properties::BaseProblem>
     using MICPModule = BlackOilMICPModule<TypeTag>;
     using DispersionModule = BlackOilDispersionModule<TypeTag, enableDispersion>;
     using DiffusionModule = BlackOilDiffusionModule<TypeTag, enableDiffusion>;
+    using ConvectiveMixingModule = BlackOilConvectiveMixingModule<TypeTag>;
 
     using InitialFluidState = typename EquilInitializer<TypeTag>::ScalarFluidState;
 
@@ -303,6 +305,7 @@ public:
         MICPModule::initFromState(vanguard.eclState());
         DispersionModule::initFromState(vanguard.eclState());
         DiffusionModule::initFromState(vanguard.eclState());
+        ConvectiveMixingModule::initFromState(vanguard.eclState(), vanguard.schedule());
 
         // create the ECL writer
         eclWriter_ = std::make_unique<EclWriterType>(simulator);
@@ -520,6 +523,8 @@ public:
         const auto& schedule = simulator.vanguard().schedule();
         const auto& events = schedule[episodeIdx].events();
 
+
+
         if (episodeIdx >= 0 && events.hasEvent(ScheduleEvents::GEO_MODIFIER)) {
             // bring the contents of the keywords to the current state of the SCHEDULE
             // section.
@@ -574,6 +579,8 @@ public:
                 FluidSystem::setVapPars(0.0, 0.0);
             }
         }
+
+        ConvectiveMixingModule::beginEpisode(simulator.vanguard().eclState(), simulator.vanguard().schedule(), episodeIdx);
     }
 
     /*!
@@ -1903,6 +1910,7 @@ protected:
                               }
             );
     }
+
 
     bool updateMaxOilSaturation_()
     {
