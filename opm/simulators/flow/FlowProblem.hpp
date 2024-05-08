@@ -61,6 +61,7 @@
 #include <opm/models/blackoil/blackoilmodel.hh>
 #include <opm/models/blackoil/blackoilconvectivemixingmodule.hh>
 #include <opm/models/discretization/ecfv/ecfvdiscretization.hh>
+#include <opm/models/blackoil/blackoillocalresidualtpfa.hh>
 
 #include <opm/output/eclipse/EclipseIO.hpp>
 
@@ -182,6 +183,7 @@ class FlowProblem : public GetPropType<TypeTag, Properties::BaseProblem>
     using DispersionModule = BlackOilDispersionModule<TypeTag, enableDispersion>;
     using DiffusionModule = BlackOilDiffusionModule<TypeTag, enableDiffusion>;
     using ConvectiveMixingModule = BlackOilConvectiveMixingModule<TypeTag>;
+    using ModuleParams = typename BlackOilLocalResidualTPFA<TypeTag>::ModuleParams;
 
     using InitialFluidState = typename EquilInitializer<TypeTag>::ScalarFluidState;
 
@@ -305,7 +307,6 @@ public:
         MICPModule::initFromState(vanguard.eclState());
         DispersionModule::initFromState(vanguard.eclState());
         DiffusionModule::initFromState(vanguard.eclState());
-        ConvectiveMixingModule::initFromState(vanguard.eclState(), vanguard.schedule());
 
         // create the ECL writer
         eclWriter_ = std::make_unique<EclWriterType>(simulator);
@@ -580,7 +581,7 @@ public:
             }
         }
 
-        ConvectiveMixingModule::beginEpisode(simulator.vanguard().eclState(), simulator.vanguard().schedule(), episodeIdx);
+        ConvectiveMixingModule::beginEpisode(simulator.vanguard().eclState(), simulator.vanguard().schedule(), episodeIdx, moduleParams_.convectiveMixingModuleParam);
     }
 
     /*!
@@ -1819,6 +1820,10 @@ public:
         eclWriter_->mutableOutputModule().setCnvData(data);
     }
 
+    const ModuleParams& moduleParams() const {
+         return moduleParams_;
+    }
+
     template<class Serializer>
     void serializeOp(Serializer& serializer)
     {
@@ -2550,7 +2555,6 @@ protected:
         return this->rockCompTransMultVal_[dofIdx];
     }
 
-
 private:
     struct PffDofData_
     {
@@ -2836,6 +2840,10 @@ private:
     BCData<int> bcindex_;
     bool nonTrivialBoundaryConditions_ = false;
     bool explicitRockCompaction_ = false;
+
+    ModuleParams moduleParams_;
+    
+
 };
 
 } // namespace Opm
