@@ -108,7 +108,6 @@ init(std::size_t numDof, int episodeIdx, const unsigned ntpvt)
         dRsDtOnlyFreeGas_.resize(ntpvt, false);
         lastRs_.resize(numDof, 0.0);
         maxDRv_.resize(ntpvt, 1e30);
-        lastRv_.resize(numDof, 0.0);
         if (this->drsdtConvective(episodeIdx)) {
             convectiveDrs_.resize(numDof, 1.0);
         }
@@ -119,8 +118,6 @@ bool MixingRateControls<FluidSystem>::
 drsdtActive(int episodeIdx) const
 {
     const auto& oilVaporizationControl = schedule_[episodeIdx].oilvap();
-    const bool bothOilGasActive = FluidSystem::phaseIsActive(FluidSystem::oilPhaseIdx) &&
-                                  FluidSystem::phaseIsActive(FluidSystem::gasPhaseIdx);
     return (oilVaporizationControl.drsdtActive());
 }
 
@@ -129,8 +126,6 @@ bool MixingRateControls<FluidSystem>::
 drvdtActive(int episodeIdx) const
 {
     const auto& oilVaporizationControl = schedule_[episodeIdx].oilvap();
-    const bool bothOilGasActive = FluidSystem::phaseIsActive(FluidSystem::oilPhaseIdx) &&
-                                  FluidSystem::phaseIsActive(FluidSystem::gasPhaseIdx);
     return (oilVaporizationControl.drvdtActive());
 }
 
@@ -139,8 +134,6 @@ bool MixingRateControls<FluidSystem>::
 drsdtConvective(int episodeIdx) const
 {
     const auto& oilVaporizationControl = schedule_[episodeIdx].oilvap();
-    const bool bothOilGasActive = FluidSystem::phaseIsActive(FluidSystem::oilPhaseIdx) &&
-                                  FluidSystem::phaseIsActive(FluidSystem::gasPhaseIdx);
     return (oilVaporizationControl.drsdtConvective());
 }
 
@@ -270,7 +263,7 @@ updateConvectiveDRsDt_(const unsigned compressedDofIdx,
                        const Scalar t,
                        const Scalar p,
                        const Scalar rs,
-                       const Scalar so,
+                       const Scalar sLiquid,
                        const Scalar sg,
                        const Scalar poro,
                        const Scalar permz,
@@ -305,7 +298,7 @@ updateConvectiveDRsDt_(const unsigned compressedDofIdx,
         FluidSystem::waterPvt().viscosity(pvtRegionIndex, t, p, rs, salt) :
         FluidSystem::oilPvt().viscosity(pvtRegionIndex, t, p, rs);
 
-    // Note that for so = 0 this gives no limits (inf) for the dissolution rate
+    // Note that for sLiquid = 0 this gives no limits (inf) for the dissolution rate
     // Also we restrict the effect of convective mixing to positive density differences
     // i.e. we only allow for fingers moving downward
 
