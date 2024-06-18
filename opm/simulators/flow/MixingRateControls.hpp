@@ -132,10 +132,6 @@ public:
             const auto& pressure = (FluidSystem::phaseIsActive(FluidSystem::waterPhaseIdx)) ?
                 getValue(fs.pressure(FluidSystem::waterPhaseIdx)) :
                 getValue(fs.pressure(FluidSystem::oilPhaseIdx));
-
-            const auto& sLiquid = (FluidSystem::phaseIsActive(FluidSystem::waterPhaseIdx)) ?
-                getValue(fs.saturation(FluidSystem::waterPhaseIdx)) :
-                getValue(fs.saturation(FluidSystem::oilPhaseIdx));
             
             const auto& rs = (FluidSystem::phaseIsActive(FluidSystem::waterPhaseIdx)) ?
                 getValue(fs.Rsw()) :
@@ -147,7 +143,6 @@ public:
                                          temperature,
                                          pressure,
                                          rs,
-                                         sLiquid,
                                          getValue(fs.saturation(FluidSystem::gasPhaseIdx)),
                                          getValue(iq.porosity()),
                                          permZ,
@@ -164,7 +159,6 @@ public:
             const auto& fs = iq.fluidState();
 
             using FluidState = typename std::decay<decltype(fs)>::type;
-            const auto& oilVaporizationControl = schedule_[episodeIdx].oilvap();
             constexpr Scalar freeGasMinSaturation_ = 1e-7;
             if (oilVaporizationControl.getOption(pvtRegionIdx) ||
                 fs.saturation(FluidSystem::gasPhaseIdx) > freeGasMinSaturation_) {
@@ -190,7 +184,6 @@ private:
                                 const Scalar t,
                                 const Scalar p,
                                 const Scalar rs,
-                                const Scalar so,
                                 const Scalar sg,
                                 const Scalar poro,
                                 const Scalar permz,
