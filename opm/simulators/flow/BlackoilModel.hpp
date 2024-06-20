@@ -141,7 +141,7 @@ struct EnableDispersion<TypeTag, TTag::FlowProblem> {
 };
 template<class TypeTag>
 struct EnableConvectiveMixing<TypeTag, TTag::FlowProblem> {
-    static constexpr bool value = true;
+    static constexpr bool value = false;
 };
 
 template<class TypeTag>
