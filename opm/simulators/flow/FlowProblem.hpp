@@ -595,7 +595,7 @@ public:
             }
         }
 
-        ConvectiveMixingModule::beginEpisode(simulator.vanguard().eclState(), simulator.vanguard().schedule(), episodeIdx, moduleParams_.convectiveMixingModuleParam);
+        //ConvectiveMixingModule::beginEpisode(simulator.vanguard().eclState(), simulator.vanguard().schedule(), episodeIdx, moduleParams_.convectiveMixingModuleParam);
     }
 
     /*!
