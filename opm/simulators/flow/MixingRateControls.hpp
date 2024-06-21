@@ -163,7 +163,7 @@ public:
             if (oilVaporizationControl.getOption(pvtRegionIdx) ||
                 fs.saturation(FluidSystem::gasPhaseIdx) > freeGasMinSaturation_) {
                 lastRs_[compressedDofIdx]
-                    = (FluidSystem::phaseIsActive(FluidSystem::waterPhaseIdx)) ?
+                    = ((FluidSystem::enableDissolvedGasInWater())) ?
                     BlackOil::template getRsw_<FluidSystem, FluidState, Scalar>(fs, iq.pvtRegionIndex()) :
                     BlackOil::template getRs_<FluidSystem, FluidState, Scalar>(fs, iq.pvtRegionIndex());
             }
