@@ -276,7 +276,7 @@ updateConvectiveDRsDt_(const unsigned compressedDofIdx,
                        const int pvtRegionIndex)
 {
     const Scalar rssat = (FluidSystem::phaseIsActive(FluidSystem::waterPhaseIdx)) ?
-        FluidSystem::waterPvt().saturatedGasDissolutionFactor(pvtRegionIndex, t, p, salt) : 
+        FluidSystem::waterPvt().saturatedGasDissolutionFactor(pvtRegionIndex, t, p, salt) :
         FluidSystem::oilPvt().saturatedGasDissolutionFactor(pvtRegionIndex, t, p);
     const Scalar saturatedInvB = (FluidSystem::phaseIsActive(FluidSystem::waterPhaseIdx)) ?
         FluidSystem::waterPvt().saturatedInverseFormationVolumeFactor(pvtRegionIndex, t, p, salt) :
@@ -308,7 +308,7 @@ updateConvectiveDRsDt_(const unsigned compressedDofIdx,
 	Scalar X = (rs - rssat * sg) / (rssat * ( 1.0 - sg));
     Scalar omega = 0.0;
     const Scalar pCap = abs(pg - p);
-    
+
 	if ((rs >= (rssat * sg)) || (pCap < 1e-10)){
 	    if(X > Psi){
 		    factor = 0.0;
@@ -320,7 +320,7 @@ updateConvectiveDRsDt_(const unsigned compressedDofIdx,
 	}
     
     convectiveDrs_[compressedDofIdx]
-        = factor * permz * rssat * max(0.0, deltaDensity) * gravity / ( std::max(sg_max - sg, 0.0) * visc * distZ * poro) + (omega/Xhi); 
+        = factor * permz * rssat * max(0.0, deltaDensity) * gravity / ( std::max(sg_max - sg, 0.0) * visc * distZ * poro) + (omega/Xhi);
 }
 
 template class MixingRateControls<BlackOilFluidSystem<double,BlackOilDefaultIndexTraits>>;

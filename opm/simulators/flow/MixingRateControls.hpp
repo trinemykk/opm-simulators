@@ -118,7 +118,6 @@ public:
                 const std::array<bool,3>& active)
     {
         const auto& oilVaporizationControl = schedule_[episodeIdx].oilvap();
-
         if (active[0]) {
             // This implements the convective DRSDT as described in
             // Sandve et al. "Convective dissolution in field scale CO2 storage simulations using the OPM Flow
@@ -129,19 +128,18 @@ public:
             const auto& temperature = (FluidSystem::phaseIsActive(FluidSystem::waterPhaseIdx)) ?
                 getValue(fs.temperature(FluidSystem::waterPhaseIdx)) :
                 getValue(fs.temperature(FluidSystem::oilPhaseIdx));
-            
+
             const auto& pressure = (FluidSystem::phaseIsActive(FluidSystem::waterPhaseIdx)) ?
                 getValue(fs.pressure(FluidSystem::waterPhaseIdx)) :
                 getValue(fs.pressure(FluidSystem::oilPhaseIdx));
-            
             const auto& pressuregas = getValue(fs.pressure(FluidSystem::gasPhaseIdx));
             
             const auto& rs = (FluidSystem::phaseIsActive(FluidSystem::waterPhaseIdx)) ?
                 getValue(fs.Rsw()) :
                 getValue(fs.Rs());
-            
-            const auto& salt = getValue(fs.saltSaturation());
 
+            const auto& salt = getValue(fs.saltSaturation());
+        
             this->updateConvectiveDRsDt_(compressedDofIdx,
                                          temperature,
                                          pressure,
