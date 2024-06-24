@@ -129,9 +129,12 @@ public:
             const auto& temperature = (FluidSystem::phaseIsActive(FluidSystem::waterPhaseIdx)) ?
                 getValue(fs.temperature(FluidSystem::waterPhaseIdx)) :
                 getValue(fs.temperature(FluidSystem::oilPhaseIdx));
+            
             const auto& pressure = (FluidSystem::phaseIsActive(FluidSystem::waterPhaseIdx)) ?
                 getValue(fs.pressure(FluidSystem::waterPhaseIdx)) :
                 getValue(fs.pressure(FluidSystem::oilPhaseIdx));
+            
+            const auto& pressuregas = getValue(fs.pressure(FluidSystem::gasPhaseIdx));
             
             const auto& rs = (FluidSystem::phaseIsActive(FluidSystem::waterPhaseIdx)) ?
                 getValue(fs.Rsw()) :
@@ -142,6 +145,7 @@ public:
             this->updateConvectiveDRsDt_(compressedDofIdx,
                                          temperature,
                                          pressure,
+                                         pressuregas,
                                          rs,
                                          getValue(fs.saturation(FluidSystem::gasPhaseIdx)),
                                          getValue(iq.porosity()),
@@ -183,6 +187,7 @@ private:
     void updateConvectiveDRsDt_(const unsigned compressedDofIdx,
                                 const Scalar t,
                                 const Scalar p,
+                                const Scalar pg,
                                 const Scalar rs,
                                 const Scalar sg,
                                 const Scalar poro,

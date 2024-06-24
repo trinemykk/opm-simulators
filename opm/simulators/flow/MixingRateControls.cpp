@@ -262,6 +262,7 @@ void MixingRateControls<FluidSystem>::
 updateConvectiveDRsDt_(const unsigned compressedDofIdx,
                        const Scalar t,
                        const Scalar p,
+                       const Scalar pg,
                        const Scalar rs,
                        const Scalar sg,
                        const Scalar poro,
@@ -306,15 +307,17 @@ updateConvectiveDRsDt_(const unsigned compressedDofIdx,
 	Scalar factor = 1.0;
 	Scalar X = (rs - rssat * sg) / (rssat * ( 1.0 - sg));
     Scalar omega = 0.0;
-	if ((rs >= (rssat * sg))){
+    const Scalar pCap = abs(pg - p);
+    
+	if ((rs >= (rssat * sg)) || (pCap < 1e-10)){
 	    if(X > Psi){
 		    factor = 0.0;
             omega = omegainn;
         }
 	} else {
-	        factor /= Xhi;
-	        deltaDensity = (saturatedDensity - co2Density);
-	    }
+	    factor /= Xhi;
+	    deltaDensity = (saturatedDensity - co2Density);
+	}
     
     convectiveDrs_[compressedDofIdx]
         = factor * permz * rssat * max(0.0, deltaDensity) * gravity / ( std::max(sg_max - sg, 0.0) * visc * distZ * poro) + (omega/Xhi); 
