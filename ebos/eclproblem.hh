@@ -2223,9 +2223,10 @@ protected:
 			Scalar S = (rs - rssat * sg) / (rssat * ( 1.0 - sg));
             Scalar alpha = 0.0;
 			 if ((rs >= (rssat * sg)) && (episodeIdx >=1)) {
-			 	if(S > Smo)
+			 	if(S > Smo){
 			 		factor = 0.0;
                     alpha = oilVaporizationControl.getAlpha(fs.pvtRegionIndex()); //3.0e-9;
+                }
 			 } else {
 			 	factor /= Xhi;
 			 	deltaDensity = (saturatedDensity - co2Density);
