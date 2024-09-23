@@ -713,7 +713,8 @@ public:
     {
         unsigned globalSpaceIdx = context.globalSpaceIndex(spaceIdx, timeIdx);
         //return this->rockReferencePressure(globalSpaceIdx);
-        return initialFluidStates_[globalSpaceIdx].pressure(oilPhaseIdx);
+        //return initialFluidStates_[globalSpaceIdx].pressure(oilPhaseIdx);
+        return asImp_().initialFluidState(globalDofIdx).pressure(oilPhaseIdx);
     }
 
     /*!
