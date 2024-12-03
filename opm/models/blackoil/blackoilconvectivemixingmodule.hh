@@ -194,7 +194,10 @@ public:
         // test om det er mobil gass i begge cellene
         const auto& sg_in = intQuantsIn.fluidState().saturation(FluidSystem::gasPhaseIdx);
         const auto& sg_ex = intQuantsEx.fluidState().saturation(FluidSystem::gasPhaseIdx);
-        if (sg_in > 0.1 && sg_ex > 0.1){ // alt. > 0 (?) in[0,0.1] SAMME på begge
+        if (sg_in > 0 && sg_in < 0.1){ // alt. > 0 (?) in[0,0.1] SAMME på begge
+            return;
+        }
+        if (sg_ex > 0 && sg_ex < 0.1){ // alt. > 0 (?) in[0,0.1] SAMME på begge
             return;
         }
         // test  --> bruk mixa tetthet, instab på topprn, 
@@ -299,7 +302,10 @@ public:
         // test om det er mobil gass i begge cellene
         const auto& sg_in = intQuantsIn.fluidState().saturation(FluidSystem::gasPhaseIdx);
         const auto& sg_ex = intQuantsEx.fluidState().saturation(FluidSystem::gasPhaseIdx);
-        if (sg_in > 0.1 && sg_ex > 0.1){ // alt. > 0 (?) in[0,0.1] SAMME på begge
+        if (sg_in > 0 && sg_in < 0.1){ // alt. > 0 (?) in[0,0.1] SAMME på begge
+            return;
+        }
+        if (sg_ex > 0 && sg_ex < 0.1){ // alt. > 0 (?) in[0,0.1] SAMME på begge
             return;
         }
         // test  --> bruk mixa tetthet, instab på topprn, 
