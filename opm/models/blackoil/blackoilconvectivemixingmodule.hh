@@ -308,6 +308,12 @@ public:
         if (sg_ex > 0 && sg_ex < 0.1){ // alt. > 0 (?) in[0,0.1] SAMME på begge
             return;
         }
+        //test 0.1+epsilon som endepunkt
+
+        //Scalar X = (rs - rssat * sg) / (rssat * ( 1.0 - sg));
+        //if (X > psi+epsilon) {
+        //    return;
+       // }
         // test  --> bruk mixa tetthet, instab på topprn, 
         // regime true () for desse cellene, Rs, Rssat --> X
         // Sg = Sg_res (?)
